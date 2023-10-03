@@ -111,6 +111,8 @@ app.post("/api/:client/message", upload.single("file"), async (req, res) => {
     let { phone } = req.body;
     let file = await req.file;
 
+    console.log("file", file)
+
     let fileResp = await uploadFile(file, client);
     if (!fileResp?.success)
       resp = { err: fileResp?.error?.message, success: false };
