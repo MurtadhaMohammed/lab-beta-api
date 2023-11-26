@@ -26,6 +26,21 @@ app.get("/", (req, res) => {
   res.json({ msg: "hi" });
 });
 
+app.put("/api/signout/:id", async (req, res) => {
+  let resp = {};
+  try {
+    let _id = req?.params?.id;
+    await User.findByIdAndUpdate(_id, {
+      active: false,
+      UUID: null,
+    });
+    resp = { success: true };
+  } catch (error) {
+    resp = { err: error.message, success: false };
+  }
+  res.json(resp);
+});
+
 app.post("/api/login", async (req, res) => {
   let resp = {};
   try {
