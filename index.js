@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 const User = require("./src/modals/User");
 
 app.get("/", (req, res) => {
-  res.json({ msg: "hi" });
+  res.json({ msg: "hi All" });
 });
 
 app.put("/api/signout/:id", async (req, res) => {
@@ -55,6 +55,20 @@ app.post("/api/login", async (req, res) => {
     } else if (user && user.active && UUID === user.UUID)
       resp = { user, success: true };
     else resp = { success: false };
+  } catch (error) {
+    resp = { err: error.message, success: false };
+  }
+  res.json(resp);
+});
+
+app.get("/api/users", async (req, res) => {
+  let resp = {};
+  let q = req.query.q || "";
+  try {
+    const users = await User.find({
+      key: { $regex: ".*" + q + ".*" },
+    }).exec();
+    resp = { users, success: true };
   } catch (error) {
     resp = { err: error.message, success: false };
   }
