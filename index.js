@@ -83,7 +83,8 @@ app.post("/api/user/add", async (req, res) => {
   const newUser = new User({
     key,
     exp,
-    active: true
+    active: true,
+    UUID: null
   });
 
   try {
