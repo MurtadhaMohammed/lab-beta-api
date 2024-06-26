@@ -4,8 +4,7 @@ const app = express();
 const port = 3000;
 const mongoose = require("mongoose");
 require("dotenv").config();
-const jwt = require('jsonwebtoken');
-
+const jwt = require("jsonwebtoken");
 
 const mongoString = process.env.DATABASE_URL;
 mongoose.connect(mongoString);
@@ -76,6 +75,23 @@ app.get("/api/users", async (req, res) => {
     resp = { err: error.message, success: false };
   }
   res.json(resp);
+});
+
+app.post("/api/user/add", async (req, res) => {
+  const { key, exp } = req.body;
+
+  const newUser = new User({
+    key,
+    exp,
+    active: true
+  });
+
+  try {
+    const savedUser = await newUser.save();
+    res.status(201).json({ user: savedUser, success: true });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
 });
 
 //Admin
