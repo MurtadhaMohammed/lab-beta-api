@@ -4,6 +4,8 @@ const app = express();
 const port = 3000;
 const mongoose = require("mongoose");
 require("dotenv").config();
+const jwt = require('jsonwebtoken');
+
 
 const mongoString = process.env.DATABASE_URL;
 mongoose.connect(mongoString);
@@ -21,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const User = require("./src/modals/User");
+const Admin = require("./src/modals/Admin");
 
 app.get("/", (req, res) => {
   res.json({ msg: "hi All" });
@@ -73,6 +76,38 @@ app.get("/api/users", async (req, res) => {
     resp = { err: error.message, success: false };
   }
   res.json(resp);
+});
+
+//Admin
+app.post("/api/admin/add", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const newAdmin = new Admin({ username, password });
+    await newAdmin.save();
+    res.status(201).send({ message: "Admin created successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+app.post("/api/admin/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username });
+    if (!admin) {
+      return res.status(401).send({ error: "Invalid username or password" });
+    }
+    const isMatch = await admin.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).send({ error: "Invalid username or password" });
+    }
+    const token = jwt.sign({ id: admin._id }, "your_jwt_secret", {
+      expiresIn: "100000h",
+    });
+    res.status(200).send({ token });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
