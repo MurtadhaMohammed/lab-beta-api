@@ -77,6 +77,22 @@ app.get("/api/users", async (req, res) => {
   res.json(resp);
 });
 
+app.delete("/api/user/:id", async (req, res) => {
+  let resp = {};
+  try {
+    let _id = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(_id);
+    if (!deletedUser) {
+      resp = { message: "User not found", success: false };
+    } else {
+      resp = { message: "User deleted successfully", success: true };
+    }
+  } catch (error) {
+    resp = { err: error.message, success: false };
+  }
+  res.json(resp);
+});
+
 app.post("/api/user/add", async (req, res) => {
   const { key, exp } = req.body;
 
