@@ -92,6 +92,21 @@ app.delete("/api/user/:id", async (req, res) => {
   }
   res.json(resp);
 });
+app.put("/api/user/toggle/:id", async (req, res) => {
+  let resp = {};
+  try {
+    let _id = req.params.id;
+    const user = await User.findById(_id);
+    user.active = !user.active;
+    const updatedUser = await user.save();
+    resp = { user: updatedUser, success: true };
+  } catch (error) {
+    resp = { err: error.message, success: false };
+  }
+  res.json(resp);
+});
+
+
 
 app.post("/api/user/add", async (req, res) => {
   const { key, exp } = req.body;
