@@ -114,7 +114,7 @@ app.post("/api/user/add", async (req, res) => {
   const newUser = new User({
     key,
     exp,
-    active: true,
+    active: false,
     UUID: null
   });
 
