@@ -17,6 +17,10 @@ const dataSchema = new mongoose.Schema({
     required: false,
     type: String,
   },
+  info: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Info',
+  }
 });
 
 module.exports = mongoose.model("user", dataSchema);
